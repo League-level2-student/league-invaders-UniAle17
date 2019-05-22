@@ -1,3 +1,5 @@
+
+
 import javax.swing.JFrame;
 
 public class LeagueInvaders {
@@ -7,6 +9,7 @@ public class LeagueInvaders {
 	JFrame frame;
 	
 	GamePanel GP;
+	
 	
 	LeagueInvaders(){
 		
@@ -24,6 +27,8 @@ public class LeagueInvaders {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		frame.setVisible(true);
+		
+		frame.addKeyListener(GP);
 		
 	}
 	
