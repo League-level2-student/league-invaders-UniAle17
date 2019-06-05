@@ -6,7 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 
@@ -16,22 +18,33 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	final int GAME = 1;
 	final int END = 2;
 	int currentState = MENU;
+	public static BufferedImage image;
+	public static boolean needImage = true;
+	public static boolean gotImage = true;
+	
 	
 	Font titleFont;
 	Font messageFont;
 	
 	Timer frameDraw;
+	Timer alienSpawn;
 	
 	Rocketship robby;
 	
-	ObjectManager om = new ObjectManager(robby);
+	ObjectManager om; 
 	
 	
 	
 	
 	GamePanel(){
-		robby= new Rocketship(250, 700, 50 ,50);
 		
+		if (needImage) {
+		    loadImage ("Background.png");
+		}
+		
+		robby= new
+		Rocketship(250, 700, 50 ,50);
+		om = new ObjectManager(robby);
 		titleFont = new Font("Arial", Font.PLAIN, 36);
 		messageFont = new Font("Arial", Font.PLAIN, 20);
 		
@@ -40,6 +53,26 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	
 		
 	}
+	
+	void startGame(){
+		
+		alienSpawn= new Timer(1000, om);
+		alienSpawn.start();
+	}
+	
+	
+	void loadImage(String imageFile) {
+	    if (needImage) {
+	        try {
+	            image = ImageIO.read(this.getClass().getResourceAsStream(imageFile));
+		    gotImage = true;
+	        } catch (Exception e) {
+	            
+	        }
+	        needImage = false;
+	    }
+	}
+	
 	
 	
 	@Override
@@ -99,9 +132,14 @@ void drawMenuState(Graphics g) {
 
 void drawGameState(Graphics g) {
 	
+	if(gotImage) {
+		g.drawImage(image, 0, 0, LeagueInvaders.WIDTH, LeagueInvaders.HEIGHT, null);
+	}
+	
+	else {
 	g.setColor(Color.BLACK);
 	g.fillRect(0, 0, LeagueInvaders.WIDTH, LeagueInvaders.HEIGHT);
-	
+	}
 	om.draw(g);
 	
 }
@@ -140,6 +178,8 @@ public void actionPerformed(ActionEvent e) {
 	
 	else if(currentState == GAME){
 	    updateGameState();
+	    
+	    
 	} 
 	
 	else if(currentState == END){
@@ -162,11 +202,27 @@ public void keyTyped(KeyEvent e) {
 public void keyPressed(KeyEvent e) {
 	// TODO Auto-generated method stub
 	
+	if(e.getKeyCode()==KeyEvent.VK_SPACE){
+		
+		if(currentState==GAME) {
+			om.addProjectile(robby.getProjectile());
+		}
+		
+	}
+	
+	
+	
 	if (e.getKeyCode()==KeyEvent.VK_ENTER) {
-	    if (currentState == END) {
+	    if (currentState > END) {
 	        currentState = MENU;
 	    } else {
 	        currentState++;
+	        if(currentState==GAME) {
+	        	startGame();
+	        }
+	        if(currentState==END) {
+	        	alienSpawn.stop();
+	        }
 	    }
 	}   
 	
