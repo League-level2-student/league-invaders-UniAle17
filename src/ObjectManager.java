@@ -7,18 +7,18 @@ import java.util.Random;
 public class ObjectManager implements ActionListener {
 
 	Rocketship rob;
-	
 	ArrayList <Projectile> projectileObjects = new ArrayList <Projectile>();
-	
 	ArrayList <Alien> alienObjects = new ArrayList <Alien>();
-	
 	Random ran = new Random();
-	
 	ObjectManager(Rocketship rock){
-		
-		rob = rock;
-		
+	rob = rock;	}
+	int score=0;
+	
+	int getScore(){
+		return score;
 	}
+	
+	
 	
 	void checkCollision(){
 		
@@ -29,7 +29,24 @@ public class ObjectManager implements ActionListener {
 			
 			if(rob.collisionBox.intersects(aliens.collisionBox)){
 				
+				aliens.isActive=false;
+				rob.isActive=false;
 				
+				
+			}
+			
+			for (int j = 0; j < projectileObjects.size(); j++) {
+				
+				Projectile projectiles = projectileObjects.get(j);
+				
+				if(aliens.collisionBox.intersects(projectiles.collisionBox)) {
+				
+					projectiles.isActive=false;
+					aliens.isActive=false;
+					
+					score=score+1;
+				
+				}
 				
 			}
 			
@@ -77,7 +94,9 @@ public class ObjectManager implements ActionListener {
 				
 			}
 			
+			checkCollision();
 			
+			purgeObjects();
 		
 		
 	}
